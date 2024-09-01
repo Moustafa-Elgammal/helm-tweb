@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: 'v3.7.0'
+
+      - name: Lint Helm chart
+        run: helm lint .
+
+      - name: Package Helm chart
+        run: helm package .
+
+      - name: Upload Helm chart artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-chart
+          path: ./*.tgz
